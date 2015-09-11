@@ -12,6 +12,19 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener{
 	private List<InputListener> listeners = new ArrayList<InputListener>();
 	private List<Integer>[] updates = (ArrayList<Integer>[]) new ArrayList[0];
 	
+	public enum Updates{
+		KEY_PRESSED,
+		KEY_RELEASED,
+		KEY_TYPED,
+		MOUSE_PRESSED,
+		MOUSE_RELEASED,
+		MOUSE_CLICKED,
+		MOUSE_MOVED,
+		MOUSE_DRAGGED,
+		MOUSE_ENTERED,
+		MOUSE_EXITED
+	}
+	
 	/* The binds array contains the keybindings of the game.
 	 * Object[i][0] = int keycode
 	 * Object[i][1] = String name(jump etc.)
