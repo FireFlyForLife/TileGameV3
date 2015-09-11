@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Input implements KeyListener, MouseListener, MouseMotionListener{
 	private List<InputListener> listeners = new ArrayList<InputListener>();
-	private List<Integer>[] updates = (ArrayList<Integer>[]) new ArrayList[0];
+	private List<InputListener>[] updates = (ArrayList<InputListener>[]) new ArrayList[0];
 	
 	public enum Updates{
 		KEY_PRESSED,
