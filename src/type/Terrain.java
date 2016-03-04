@@ -16,4 +16,7 @@ public abstract class Terrain extends Flag {
 	public boolean override(){
 		return true;
 	}
+	
+	@Override
+	public void update() {	}
 }

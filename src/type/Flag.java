@@ -1,5 +1,7 @@
 package type;
 
+import input.Input;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.io.Serializable;
@@ -38,13 +40,15 @@ public abstract class Flag implements Serializable{
 	
 	public abstract Color getColor();
 	
-	public boolean onAdd(Map map) {
+	public boolean onAdd(Map map, Input i) {
 		return true;
 	}
 	
 	public boolean useInput(){
 		return false;
 	}
+	
+	public abstract void update();
 	
 	public abstract boolean blocked(Map map);
 	

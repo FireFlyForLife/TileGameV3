@@ -1,5 +1,7 @@
 package type.flags;
 
+import input.Input;
+
 import java.awt.Color;
 
 import type.Entity;
@@ -14,7 +16,7 @@ public class PointB extends Entity {
 	}
 	
 	@Override
-	public boolean onAdd(Map map){
+	public boolean onAdd(Map map, Input i){
 		for(int x = 0; x < map.getWidth(); x++){
 			for(int y = 0; y < map.getHeight(); y++){
 				for(int depth = 0; depth < map.getDepth(); depth++){

@@ -55,6 +55,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 	public void Tick() {
 		parent.repaint();
 		repaint();
+		this.requestFocus();
 	}
 	
 	public void paint(Graphics g){
@@ -149,7 +150,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		int x = e.getX() / 15;
 		int y = e.getY() / 15;
 	
-		if(flag.onAdd(map)){
+		if(flag.onAdd(map, input)){
 			if(flag.override())
 				map.set(x, y, 0, flag);
 			else

@@ -26,4 +26,6 @@ public abstract class Entity extends Flag {
 		return 0.0f;
 	}
 	
+	public void update() {	}
+	
 }

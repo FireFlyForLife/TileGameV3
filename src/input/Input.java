@@ -1,16 +1,20 @@
 package input;
 
+import input.old.IUpdateEvent;
+import input.old.UpdateEvents;
+
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Input implements KeyListener, MouseListener, MouseMotionListener{
-	private List<InputListener> listeners = new ArrayList<InputListener>();
-	private List<InputListener>[] updates = (ArrayList<InputListener>[]) new ArrayList[0];
+	private List<InputListener>[] updateEvents = (ArrayList<InputListener>[]) new ArrayList[Updates.values().length];
 	
 	public enum Updates{
 		KEY_PRESSED,
@@ -52,7 +56,9 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener{
 		for(int i = 0; i < binds.length; i++){
 			keyState[i] = false;
 		}
-		int i = InputListener.class.getDeclaredMethods().length;
+		for(int i = 0; i < Updates.values().length; i++){
+			updateEvents[i] = new ArrayList<InputListener>();
+		}
 	}
 	
 	public static Object[][] getDefaultBinds(){
@@ -114,72 +120,101 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener{
 		return -1;
 	}
 	
-	public void addInputListener(InputListener listener){
-		listeners.add(listener);
-		
+	public void addInputListener(InputListener listener, Updates... update){
+		for(Updates u : update){
+			updateEvents[u.ordinal()].add(listener);
+		}
 	}
 	
-	public void removeInputListener(InputListener listener){
-		listeners.remove(listener);
+	public void removeInputListener(InputListener listener, Updates... update){
+		for(Updates u : update){
+			updateEvents[u.ordinal()].remove(listener);
+		}
+	}
+	
+	public void removeInputListenerEverywhere(InputListener listener){
+		for(int i = 0; i < updateEvents.length; i++){
+			updateEvents[i].remove(listener);
+		}
+	}
+	
+	private void sendEvent(Updates update, KeyEvent e){
+		for(InputListener l : updateEvents[update.ordinal()]){
+			l.inputReceived(update, new input.InputEvent(getIndex(e.getKeyCode()), getState(e.getKeyCode())));
+		}
+	}
+	
+	private void sendEvent(Updates update, MouseEvent e) {
+		if(updateEvents[update.ordinal()].isEmpty())
+			return;
+		for(InputListener l : updateEvents[update.ordinal()]){
+			l.moveReceived(update, new MoverEvent(e));
+		}
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		
+	public void mouseDragged(MouseEvent e) {
+		if(useUpdate)
+			sendEvent(Updates.MOUSE_DRAGGED, e);
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		
+	public void mouseMoved(MouseEvent e) {
+		if(useUpdate)
+			sendEvent(Updates.MOUSE_MOVED, e);
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		
+		if(useUpdate)
+			sendEvent(Updates.MOUSE_CLICKED, e);
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		
+		if(useUpdate)
+			sendEvent(Updates.MOUSE_ENTERED, e);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		
+		if(useUpdate)
+			sendEvent(Updates.MOUSE_EXITED, e);
+		e.getID();
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		
+		if(useUpdate)
+			sendEvent(Updates.MOUSE_PRESSED, e);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		
+		if(useUpdate)
+			sendEvent(Updates.MOUSE_RELEASED, e);
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if(useState)
-			keyState[getKeyCode(e.getKeyCode())] = true;
-		
-	}
+			keyState[getIndex(e.getKeyCode())] = true;
+		if(useUpdate)
+			sendEvent(Updates.KEY_PRESSED, e);
+	}	
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if(useState)
-			keyState[getKeyCode(e.getKeyCode())] = false;
-		
+			keyState[getIndex(e.getKeyCode())] = false;
+		if(useUpdate)
+			sendEvent(Updates.KEY_RELEASED, e);
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
-	}
-	
-	private class ListenerListComponent{
-		public InputListener listener;
-		public List updates;
+		if(useUpdate)
+			sendEvent(Updates.KEY_TYPED, e);
 	}
 }
 	
